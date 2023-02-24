@@ -13,7 +13,7 @@ import { Services } from '../utils/constants';
 import { IGatewaySessionManager } from './gateway.session';
 import { AuthenticatedSocket } from '../utils/interfaces';
 import { CreateMessageResponse } from '../utils/types';
-import { Conversation } from '../utils/typeorm';
+import { Conversation, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
 
 @WebSocketGateway({
@@ -92,6 +92,19 @@ export class MessagingGateway implements OnGatewayConnection {
 
     if (authorSocket) authorSocket.emit('onMessage', payload);
     if (recipientSocket) recipientSocket.emit('onMessage', payload);
+  }
+
+  @OnEvent('message.update')
+  async handleMessageUpdate(message: Message) {
+    const {
+      author,
+      conversation: { creator, recipient },
+    } = message;
+    const recipientSocket =
+      author.id === creator.id
+        ? this.sessions.getUserSocket(recipient.id)
+        : this.sessions.getUserSocket(creator.id);
+    if (recipientSocket) recipientSocket.emit('onMessageUpdate', message);
   }
 
   @OnEvent('conversation.create')
