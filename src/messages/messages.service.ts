@@ -42,7 +42,9 @@ export class MessagesService implements IMessageService {
     return savedMessage;
   }
 
-  getMessagesByConversationId(conversationId: number): Promise<Message[]> {
+  async getMessagesByConversationId(
+    conversationId: number,
+  ): Promise<Message[]> {
     return this.messageRepository.find({
       relations: ['author'],
       where: { conversation: { id: conversationId } },
