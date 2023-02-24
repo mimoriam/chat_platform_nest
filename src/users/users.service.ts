@@ -26,6 +26,13 @@ export class UsersService implements IUserService {
   }
 
   async findOneUser(findUserParams: FindUserParams): Promise<User> {
-    return this.userRepository.findOne({ where: findUserParams });
+    return this.userRepository.findOne({
+      where: findUserParams,
+      relations: { participant: true },
+    });
+  }
+
+  async saveUser(user: User) {
+    return this.userRepository.save(user);
   }
 }
