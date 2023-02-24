@@ -13,7 +13,7 @@ export class MessagesController {
   ) {}
 
   @Post()
-  createMessage(
+  async createMessage(
     @AuthUser() user: User,
     @Body() createMessageDto: CreateMessageDto,
   ) {
