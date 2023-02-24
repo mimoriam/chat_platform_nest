@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
@@ -24,27 +25,50 @@ export class MessagesController {
   @Post()
   async createMessage(
     @AuthUser() user: User,
-    @Body() createMessageDto: CreateMessageDto,
+    @Param('id', ParseIntPipe) conversationId: number,
+    @Body()
+    { content }: CreateMessageDto,
   ) {
-    const response = await this.messageService.createMessage({
-      ...createMessageDto,
-      user,
-    });
+    // const response = await this.messageService.createMessage({
+    //   ...createMessageDto,
+    //   user,
+    // });
+
+    const params = { user, conversationId, content };
+    const response = await this.messageService.createMessage(params);
 
     this.eventEmitter.emit('message.create', response);
 
     return response;
   }
 
-  @Get(':conversationId')
+  @Get()
   async getMessagesFromConversation(
     @AuthUser() user: User,
-    @Param('conversationId', ParseIntPipe) conversationId: number,
+    @Param('id', ParseIntPipe) id: number,
   ) {
-    const messages = await this.messageService.getMessagesByConversationId(
-      conversationId,
-    );
+    const messages = await this.messageService.getMessagesByConversationId(id);
+    return { id, messages };
+  }
 
-    return { id: conversationId, messages };
+  @Delete(':messageId')
+  async deleteMessageFromConversation(
+    @AuthUser() user: User,
+    @Param('id', ParseIntPipe) conversationId: number,
+    @Param('messageId', ParseIntPipe) messageId: number,
+  ) {
+    await this.messageService.deleteMessage({
+      userId: user.id,
+      conversationId,
+      messageId,
+    });
+
+    this.eventEmitter.emit('message.delete', {
+      userId: user.id,
+      messageId,
+      conversationId,
+    });
+
+    return { conversationId, messageId };
   }
 }
