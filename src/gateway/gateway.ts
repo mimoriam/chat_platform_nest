@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   SubscribeMessage,
@@ -12,6 +13,7 @@ import { Services } from '../utils/constants';
 import { IGatewaySessionManager } from './gateway.session';
 import { AuthenticatedSocket } from '../utils/interfaces';
 import { CreateMessageResponse } from '../utils/types';
+import { Conversation } from '../utils/typeorm';
 
 @WebSocketGateway({
   cors: {
@@ -36,6 +38,16 @@ export class MessagingGateway implements OnGatewayConnection {
   @SubscribeMessage('createMessage')
   handleCreateMessage(@MessageBody() data: any) {}
 
+  @SubscribeMessage('onClientConnect')
+  onClientConnect(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    console.log('onClientConnect');
+    console.log(data);
+    console.log(client.user);
+  }
+
   @OnEvent('message.create')
   handleMessageCreateEvent(payload: CreateMessageResponse) {
     const {
@@ -51,5 +63,13 @@ export class MessagingGateway implements OnGatewayConnection {
 
     if (authorSocket) authorSocket.emit('onMessage', payload);
     if (recipientSocket) recipientSocket.emit('onMessage', payload);
+  }
+
+  @OnEvent('conversation.create')
+  handleConversationCreateEvent(payload: Conversation) {
+    console.log('Inside conversation.create');
+    console.log(payload.recipient);
+    const recipientSocket = this.sessions.getUserSocket(payload.recipient.id);
+    if (recipientSocket) recipientSocket.emit('onConversation', payload);
   }
 }
