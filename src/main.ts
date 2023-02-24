@@ -6,7 +6,6 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { TypeormStore } from 'connect-typeorm';
 import { DataSource } from 'typeorm';
-import { getRepository } from 'typeorm';
 import entities, { Session } from './utils/typeorm';
 
 // npm i class-validator class-transformer @nestjs/config @nestjs/throttler @nestjs/typeorm typeorm pg cookie-parser bcrypt cookie uuid
@@ -15,6 +14,9 @@ import entities, { Session } from './utils/typeorm';
 // # Sessions:
 // npm i passport passport-local @nestjs/passport express-session connect-typeorm
 // npm i -D @types/passport @types/passport-local @types/express-session
+
+// # Websockets:
+// npm i @nestjs/event-emitter @nestjs/websockets @nestjs/platform-socket.io
 async function bootstrap() {
   const { PORT, COOKIE_SECRET } = process.env;
   const app = await NestFactory.create(AppModule);
