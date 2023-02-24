@@ -41,14 +41,40 @@ export class MessagingGateway implements OnGatewayConnection {
   @SubscribeMessage('createMessage')
   handleCreateMessage(@MessageBody() data: any) {}
 
-  @SubscribeMessage('onClientConnect')
-  onClientConnect(
+  @SubscribeMessage('onConversationJoin')
+  onConversationJoin(
     @MessageBody() data: any,
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
-    console.log('onClientConnect');
-    console.log(data);
-    console.log(client.user);
+    client.join(data.conversationId);
+    console.log(client.rooms);
+    client.to(data.conversationId).emit('userJoin');
+  }
+
+  @SubscribeMessage('onConversationLeave')
+  onConversationLeave(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    client.leave(data.conversationId);
+    console.log(client.rooms);
+    client.to(data.conversationId).emit('userLeave');
+  }
+
+  @SubscribeMessage('onTypingStart')
+  onTypingStart(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    client.to(data.conversationId).emit('onTypingStart');
+  }
+
+  @SubscribeMessage('onTypingStop')
+  onTypingStop(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    client.to(data.conversationId).emit('onTypingStop');
   }
 
   @OnEvent('message.create')
