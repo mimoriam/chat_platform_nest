@@ -5,5 +5,7 @@ declare namespace NodeJS {
     PG_DB_PORT?: string;
     PG_DB_PASSWORD?: string;
     PG_DB_USERNAME?: string;
+
+    COOKIE_SECRET: string;
   }
 }

@@ -1,4 +1,4 @@
-import { User } from './typeorm';
+import { Conversation, Message, User } from './typeorm';
 
 export type CreateUserDetails = {
   email: string;
@@ -18,7 +18,7 @@ export type FindUserParams = Partial<{
 }>;
 
 export type CreateConversationParams = {
-  recipientId: number;
+  email: string;
   message: string;
 };
 
@@ -30,4 +30,9 @@ export type CreateMessageParams = {
   content: string;
   conversationId: number;
   user: User;
+};
+
+export type CreateMessageResponse = {
+  message: Message;
+  conversation: Conversation;
 };
