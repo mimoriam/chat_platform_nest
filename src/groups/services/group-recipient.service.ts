@@ -23,15 +23,15 @@ export class GroupRecipientService implements IGroupRecipientService {
     if (!group)
       throw new HttpException('Group not found', HttpStatus.BAD_REQUEST);
 
+    if (group.owner.id !== params.userId)
+      throw new HttpException('Insufficient Permissions', HttpStatus.FORBIDDEN);
+
     const recipient = await this.userService.findOneUser({
       email: params.email,
     });
 
     if (!recipient)
       throw new HttpException('Cannot Add User', HttpStatus.BAD_REQUEST);
-
-    if (group.creator.id !== params.userId)
-      throw new HttpException('Insufficient Permissions', HttpStatus.FORBIDDEN);
 
     const inGroup = group.users.find((user) => user.id === recipient.id);
 
@@ -60,10 +60,10 @@ export class GroupRecipientService implements IGroupRecipientService {
 
     if (!group) throw new GroupNotFoundException();
     // Not group owner
-    if (group.creator.id !== issuerId) throw new NotGroupOwnerException();
+    if (group.owner.id !== issuerId) throw new NotGroupOwnerException();
     // Temporary
 
-    if (group.creator.id === removeUserId)
+    if (group.owner.id === removeUserId)
       throw new HttpException(
         'Cannot remove yourself as owner',
         HttpStatus.BAD_REQUEST,

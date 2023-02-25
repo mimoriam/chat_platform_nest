@@ -29,6 +29,11 @@ export class Group {
   @JoinColumn()
   creator: User;
 
+  // Owner and creator can be different (not at start though):
+  @OneToOne(() => User, { createForeignKeyConstraints: false })
+  @JoinColumn()
+  owner: User;
+
   @OneToMany(() => GroupMessage, (message) => message.group, {
     cascade: ['insert', 'remove', 'update'],
   })
