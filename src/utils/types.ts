@@ -93,3 +93,9 @@ export type AddGroupRecipientParams = {
   email: string;
   userId: number;
 };
+
+export type RemoveGroupRecipientParams = {
+  id: number;
+  removeUserId: number;
+  issuerId: number;
+};

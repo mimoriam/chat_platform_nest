@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Inject,
   Param,
   ParseIntPipe,
@@ -27,5 +28,15 @@ export class GroupRecipientsController {
   ) {
     const params = { id, userId, email };
     return await this.groupRecipientService.addGroupRecipient(params);
+  }
+
+  @Delete(':userId')
+  async removeGroupRecipient(
+    @AuthUser() { id: issuerId }: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('userId', ParseIntPipe) removeUserId: number,
+  ) {
+    const params = { issuerId, id, removeUserId };
+    return await this.groupRecipientService.removeGroupRecipient(params);
   }
 }
