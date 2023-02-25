@@ -19,7 +19,7 @@ import {
 } from '../utils/types';
 import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
-import { IGroupService } from '../groups/groupsInterface';
+import { IGroupService } from '../groups/interfaces/groupsInterface';
 
 @WebSocketGateway({
   cors: {

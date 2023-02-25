@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
-import { Routes, Services } from '../utils/constants';
-import { IGroupService } from './groupsInterface';
-import { AuthUser } from '../utils/decorators';
-import { User } from '../utils/typeorm';
-import { CreateGroupDto } from './dtos/CreateGroup.dto';
+import { Routes, Services } from '../../utils/constants';
+import { IGroupService } from '../interfaces/groupsInterface';
+import { AuthUser } from '../../utils/decorators';
+import { User } from '../../utils/typeorm';
+import { CreateGroupDto } from '../dtos/CreateGroup.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller(Routes.GROUPS)
