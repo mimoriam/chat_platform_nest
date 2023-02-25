@@ -245,4 +245,10 @@ export class MessagingGateway
       .map((user) => this.sessions.getUserSocket(user.id) && user)
       .filter((user) => user);
   }
+
+  @OnEvent('group.owner.update')
+  handleGroupOwnerUpdate(payload: Group) {
+    const ROOM_NAME = `group-${payload.id}`;
+    this.server.to(ROOM_NAME).emit('onGroupOwnerUpdate', payload);
+  }
 }
