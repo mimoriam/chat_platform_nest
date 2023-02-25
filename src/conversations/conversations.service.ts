@@ -1,11 +1,15 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { IConversationsService } from './conversationInterface';
-import { CreateConversationParams } from '../utils/types';
+import {
+  ConversationAccessParams,
+  CreateConversationParams,
+} from '../utils/types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, User } from '../utils/typeorm';
 import { Repository } from 'typeorm';
 import { Services } from '../utils/constants';
 import { IUserService } from '../users/userInterface';
+import { ConversationNotFoundException } from './exceptions/ConversationNotFound';
 
 @Injectable()
 export class ConversationsService implements IConversationsService {
@@ -28,7 +32,7 @@ export class ConversationsService implements IConversationsService {
       .getMany();
   }
 
-  async findConversationById(id: number): Promise<Conversation> {
+  async findConversationById(id: number) {
     return this.conversationRepository.findOne({
       where: { id },
       relations: ['lastMessageSent', 'creator', 'recipient'],
@@ -71,5 +75,13 @@ export class ConversationsService implements IConversationsService {
     });
 
     return this.conversationRepository.save(conversation);
+  }
+
+  async hasAccess({ conversationId: id, userId }: ConversationAccessParams) {
+    const conversation = await this.findConversationById(id);
+    if (!conversation) throw new ConversationNotFoundException();
+    return (
+      conversation.creator.id === userId || conversation.recipient.id === userId
+    );
   }
 }
