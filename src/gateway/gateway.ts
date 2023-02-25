@@ -16,7 +16,7 @@ import {
   CreateGroupMessageResponse,
   CreateMessageResponse,
 } from '../utils/types';
-import { Conversation, Message } from '../utils/typeorm';
+import { Conversation, Group, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
 
 @WebSocketGateway({
@@ -146,6 +146,14 @@ export class MessagingGateway implements OnGatewayConnection {
   async handleGroupMessageCreate(payload: CreateGroupMessageResponse) {
     const { id } = payload.group;
     this.server.to(`group-${id}`).emit('onGroupMessage', payload);
+  }
+
+  @OnEvent('group.create')
+  handleGroupCreate(payload: Group) {
+    payload.users.forEach((user) => {
+      const socket = this.sessions.getUserSocket(user.id);
+      socket && socket.emit('onGroupCreate', payload);
+    });
   }
 
   @OnEvent('message.delete')
