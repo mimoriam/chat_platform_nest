@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   ParseIntPipe,
@@ -36,5 +37,14 @@ export class GroupMessagesController {
     this.eventEmitter.emit('group.message.create', response);
 
     return response;
+  }
+
+  @Get()
+  async getGroupMessages(
+    @AuthUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const messages = await this.groupMessageService.getGroupMessages(id);
+    return { id, messages };
   }
 }

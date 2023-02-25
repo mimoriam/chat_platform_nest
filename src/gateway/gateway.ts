@@ -118,14 +118,35 @@ export class MessagingGateway implements OnGatewayConnection {
 
   @OnEvent('conversation.create')
   handleConversationCreateEvent(payload: Conversation) {
-    console.log('Inside conversation.create');
-    console.log(payload.recipient);
     const recipientSocket = this.sessions.getUserSocket(payload.recipient.id);
     if (recipientSocket) recipientSocket.emit('onConversation', payload);
   }
 
+  @SubscribeMessage('onGroupJoin')
+  onGroupJoin(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    client.join(`group-${data.groupId}`);
+    console.log(client.rooms);
+    client.to(`group-${data.groupId}`).emit('userGroupJoin');
+  }
+
+  @SubscribeMessage('onGroupLeave')
+  onGroupLeave(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    client.leave(`group-${data.groupId}`);
+    console.log(client.rooms);
+    client.to(`group-${data.groupId}`).emit('userGroupLeave');
+  }
+
   @OnEvent('group.message.create')
-  async handleGroupMessageCreate(payload: CreateGroupMessageResponse) {}
+  async handleGroupMessageCreate(payload: CreateGroupMessageResponse) {
+    const { id } = payload.group;
+    this.server.to(`group-${id}`).emit('onGroupMessage', payload);
+  }
 
   @OnEvent('message.delete')
   async handleMessageDelete(payload) {
