@@ -13,7 +13,7 @@ export class GroupsController {
 
   @Post()
   async createGroup(@AuthUser() user: User, @Body() payload: CreateGroupDto) {
-    this.groupService.createGroup({ ...payload, creator: user });
+    return await this.groupService.createGroup({ ...payload, creator: user });
   }
 
   @Get()
