@@ -16,6 +16,7 @@ import { User } from '../utils/typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EditMessageDto } from './dtos/EditMessage.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller(Routes.MESSAGES)
 export class MessagesController {
@@ -24,6 +25,7 @@ export class MessagesController {
     private eventEmitter: EventEmitter2,
   ) {}
 
+  @Throttle(5, 10)
   @Post()
   async createMessage(
     @AuthUser() user: User,
