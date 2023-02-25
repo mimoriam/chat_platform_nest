@@ -1,9 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { IConversationsService } from './conversationInterface';
-import {
-  ConversationAccessParams,
-  CreateConversationParams,
-} from '../utils/types';
+import { AccessParams, CreateConversationParams } from '../utils/types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, User } from '../utils/typeorm';
 import { Repository } from 'typeorm';
@@ -77,7 +74,7 @@ export class ConversationsService implements IConversationsService {
     return this.conversationRepository.save(conversation);
   }
 
-  async hasAccess({ conversationId: id, userId }: ConversationAccessParams) {
+  async hasAccess({ id, userId }: AccessParams) {
     const conversation = await this.findConversationById(id);
     if (!conversation) throw new ConversationNotFoundException();
     return (

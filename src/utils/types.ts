@@ -111,7 +111,7 @@ export type RemoveGroupUserResponse = {
   user: User;
 };
 
-export type ConversationAccessParams = {
-  conversationId: number;
+export type AccessParams = {
+  id: number;
   userId: number;
 };
