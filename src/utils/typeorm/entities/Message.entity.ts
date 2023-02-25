@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Conversation } from './Conversation.entity';
 import { User } from './User.entity';
+import { Group } from './Group.entity';
 
 @Entity({ name: 'messages' })
 export class Message {
@@ -24,4 +25,7 @@ export class Message {
 
   @ManyToOne(() => Conversation, (conversation) => conversation.messages)
   conversation: Conversation;
+
+  @ManyToOne(() => Group, (group) => group.messages)
+  group?: Group;
 }

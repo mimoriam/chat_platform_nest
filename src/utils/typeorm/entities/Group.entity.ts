@@ -1,31 +1,35 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './User.entity';
 import { Message } from './Message.entity';
+import { User } from './User.entity';
 
-@Entity({ name: 'conversations' })
-@Index(['creator.id', 'recipient.id'], { unique: true })
-export class Conversation {
+@Entity({ name: 'groups' })
+export class Group {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: true })
+  title?: string;
+
+  @ManyToMany(() => User, (user) => user.groups)
+  @JoinTable()
+  users: User[];
 
   @OneToOne(() => User, { createForeignKeyConstraints: false })
   @JoinColumn()
   creator: User;
 
-  @OneToOne(() => User, { createForeignKeyConstraints: false })
-  @JoinColumn()
-  recipient: User;
-
-  @OneToMany(() => Message, (message) => message.conversation, {
+  @OneToMany(() => Message, (message) => message.group, {
     cascade: ['insert', 'remove', 'update'],
   })
   @JoinColumn()
