@@ -23,6 +23,6 @@ export class GroupsController {
 
   @Get(':id')
   async getGroup(@AuthUser() user: User, @Param('id') id: number) {
-    return this.groupService.getGroupById(id);
+    return await this.groupService.findGroupById(id);
   }
 }

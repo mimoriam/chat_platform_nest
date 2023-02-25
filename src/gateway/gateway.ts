@@ -12,7 +12,10 @@ import { Inject } from '@nestjs/common';
 import { Services } from '../utils/constants';
 import { IGatewaySessionManager } from './gateway.session';
 import { AuthenticatedSocket } from '../utils/interfaces';
-import { CreateMessageResponse } from '../utils/types';
+import {
+  CreateGroupMessageResponse,
+  CreateMessageResponse,
+} from '../utils/types';
 import { Conversation, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
 
@@ -46,9 +49,11 @@ export class MessagingGateway implements OnGatewayConnection {
     @MessageBody() data: any,
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
-    client.join(data.conversationId);
+    // client.join(data.conversationId);
+    client.join(`conversation-${data.conversationId}`);
     console.log(client.rooms);
-    client.to(data.conversationId).emit('userJoin');
+    // client.to(data.conversationId).emit('userJoin');
+    client.to(`conversation-${data.conversationId}`).emit('userJoin');
   }
 
   @SubscribeMessage('onConversationLeave')
@@ -56,9 +61,11 @@ export class MessagingGateway implements OnGatewayConnection {
     @MessageBody() data: any,
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
-    client.leave(data.conversationId);
+    // client.leave(data.conversationId);
+    client.leave(`conversation-${data.conversationId}`);
     console.log(client.rooms);
-    client.to(data.conversationId).emit('userLeave');
+    // client.to(data.conversationId).emit('userLeave');
+    client.to(`conversation-${data.conversationId}`).emit('userLeave');
   }
 
   @SubscribeMessage('onTypingStart')
@@ -66,7 +73,8 @@ export class MessagingGateway implements OnGatewayConnection {
     @MessageBody() data: any,
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
-    client.to(data.conversationId).emit('onTypingStart');
+    // client.to(data.conversationId).emit('onTypingStart');
+    client.to(`conversation-${data.conversationId}`).emit('onTypingStart');
   }
 
   @SubscribeMessage('onTypingStop')
@@ -74,7 +82,8 @@ export class MessagingGateway implements OnGatewayConnection {
     @MessageBody() data: any,
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
-    client.to(data.conversationId).emit('onTypingStop');
+    // client.to(data.conversationId).emit('onTypingStop');
+    client.to(`conversation-${data.conversationId}`).emit('onTypingStop');
   }
 
   @OnEvent('message.create')
@@ -114,6 +123,9 @@ export class MessagingGateway implements OnGatewayConnection {
     const recipientSocket = this.sessions.getUserSocket(payload.recipient.id);
     if (recipientSocket) recipientSocket.emit('onConversation', payload);
   }
+
+  @OnEvent('group.message.create')
+  async handleGroupMessageCreate(payload: CreateGroupMessageResponse) {}
 
   @OnEvent('message.delete')
   async handleMessageDelete(payload) {

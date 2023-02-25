@@ -6,5 +6,7 @@ export interface IGroupService {
 
   getGroups(params: FetchGroupsParams): Promise<Group[]>;
 
-  getGroupById(id: number): Promise<Group>;
+  findGroupById(id: number): Promise<Group>;
+
+  saveGroup(group: Group): Promise<Group>;
 }

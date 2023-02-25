@@ -15,5 +15,11 @@ import { Group } from '../utils/typeorm';
       useClass: GroupsService,
     },
   ],
+  exports: [
+    {
+      provide: Services.GROUPS,
+      useClass: GroupsService,
+    },
+  ],
 })
 export class GroupsModule {}

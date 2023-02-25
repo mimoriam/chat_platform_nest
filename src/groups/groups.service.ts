@@ -39,10 +39,14 @@ export class GroupsService implements IGroupService {
       .getMany();
   }
 
-  async getGroupById(id: number): Promise<Group> {
+  async findGroupById(id: number): Promise<Group> {
     return this.groupRepository.findOne({
       where: { id },
       relations: ['creator', 'users', 'lastMessageSent'],
     });
+  }
+
+  async saveGroup(group: Group): Promise<Group> {
+    return this.groupRepository.save(group);
   }
 }
