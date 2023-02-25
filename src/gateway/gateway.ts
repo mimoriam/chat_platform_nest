@@ -2,6 +2,7 @@ import {
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -18,6 +19,7 @@ import {
 } from '../utils/types';
 import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
+import { IGroupService } from '../groups/groupsInterface';
 
 @WebSocketGateway({
   cors: {
@@ -25,12 +27,16 @@ import { IConversationsService } from '../conversations/conversationInterface';
     credentials: true,
   },
 })
-export class MessagingGateway implements OnGatewayConnection {
+export class MessagingGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(
     @Inject(Services.GATEWAY_SESSION_MANAGER)
     private readonly sessions: IGatewaySessionManager,
     @Inject(Services.CONVERSATIONS)
     private readonly conversationService: IConversationsService,
+    @Inject(Services.GROUPS)
+    private readonly groupsService: IGroupService,
   ) {}
 
   @WebSocketServer()
@@ -39,6 +45,35 @@ export class MessagingGateway implements OnGatewayConnection {
   handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
     this.sessions.setUserSocket(socket.user.id, socket);
     socket.emit('connected', { status: 'good' });
+  }
+
+  handleDisconnect(socket: AuthenticatedSocket) {
+    this.sessions.removeUserSocket(socket.user.id);
+  }
+
+  @SubscribeMessage('getOnlineGroupUsers')
+  async handleGetOnlineGroupUsers(
+    @MessageBody() data: any,
+    @ConnectedSocket() socket: AuthenticatedSocket,
+  ) {
+    const group = await this.groupsService.findGroupById(
+      parseInt(data.groupId),
+    );
+
+    if (!group) return;
+
+    const onlineUsers = [];
+    const offlineUsers = [];
+
+    group.users.forEach((user) => {
+      const socket = this.sessions.getUserSocket(user.id);
+      socket ? onlineUsers.push(user) : offlineUsers.push(user);
+    });
+
+    console.log(onlineUsers);
+    console.log(offlineUsers);
+
+    socket.emit('onlineGroupUsersReceived', { onlineUsers, offlineUsers });
   }
 
   @SubscribeMessage('createMessage')
