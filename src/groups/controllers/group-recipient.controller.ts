@@ -12,12 +12,14 @@ import { IGroupRecipientService } from '../interfaces/group-recipientInterface';
 import { AuthUser } from '../../utils/decorators';
 import { User } from '../../utils/typeorm';
 import { AddGroupRecipientDto } from '../dtos/AddGroupRecipient.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller(Routes.GROUP_RECIPIENTS)
 export class GroupRecipientsController {
   constructor(
     @Inject(Services.GROUP_RECIPIENTS)
     private readonly groupRecipientService: IGroupRecipientService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   @Post()
@@ -27,7 +29,10 @@ export class GroupRecipientsController {
     @Body() { email }: AddGroupRecipientDto,
   ) {
     const params = { id, userId, email };
-    return await this.groupRecipientService.addGroupRecipient(params);
+    const response = await this.groupRecipientService.addGroupRecipient(params);
+
+    this.eventEmitter.emit('group.user.add', response);
+    return response;
   }
 
   @Delete(':userId')
@@ -37,6 +42,12 @@ export class GroupRecipientsController {
     @Param('userId', ParseIntPipe) removeUserId: number,
   ) {
     const params = { issuerId, id, removeUserId };
-    return await this.groupRecipientService.removeGroupRecipient(params);
+
+    const response = await this.groupRecipientService.removeGroupRecipient(
+      params,
+    );
+
+    this.eventEmitter.emit('group.user.remove', response);
+    return response.group;
   }
 }

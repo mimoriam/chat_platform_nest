@@ -39,7 +39,8 @@ export class GroupRecipientService implements IGroupRecipientService {
       throw new HttpException('User already in group', HttpStatus.BAD_REQUEST);
 
     group.users = [...group.users, recipient];
-    return this.groupService.saveGroup(group);
+    const savedGroup = await this.groupService.saveGroup(group);
+    return { group: savedGroup, user: recipient };
   }
 
   /**
@@ -48,6 +49,13 @@ export class GroupRecipientService implements IGroupRecipientService {
    */
   async removeGroupRecipient(params: RemoveGroupRecipientParams) {
     const { issuerId, removeUserId, id } = params;
+
+    const userToBeRemoved = await this.userService.findOneUser({
+      id: removeUserId,
+    });
+    if (!userToBeRemoved)
+      throw new HttpException('User cannot be removed', HttpStatus.BAD_REQUEST);
+
     const group = await this.groupService.findGroupById(id);
 
     if (!group) throw new GroupNotFoundException();
@@ -62,6 +70,8 @@ export class GroupRecipientService implements IGroupRecipientService {
       );
 
     group.users = group.users.filter((u) => u.id !== removeUserId);
-    return this.groupService.saveGroup(group);
+
+    const savedGroup = await this.groupService.saveGroup(group);
+    return { group: savedGroup, user: userToBeRemoved };
   }
 }

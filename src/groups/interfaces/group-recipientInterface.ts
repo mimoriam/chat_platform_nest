@@ -1,10 +1,16 @@
 import {
   AddGroupRecipientParams,
+  AddGroupUserResponse,
   RemoveGroupRecipientParams,
+  RemoveGroupUserResponse,
 } from '../../utils/types';
 
 export interface IGroupRecipientService {
-  addGroupRecipient(params: AddGroupRecipientParams);
+  addGroupRecipient(
+    params: AddGroupRecipientParams,
+  ): Promise<AddGroupUserResponse>;
 
-  removeGroupRecipient(params: RemoveGroupRecipientParams);
+  removeGroupRecipient(
+    params: RemoveGroupRecipientParams,
+  ): Promise<RemoveGroupUserResponse>;
 }

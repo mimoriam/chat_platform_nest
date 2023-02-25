@@ -14,8 +14,10 @@ import { Services } from '../utils/constants';
 import { IGatewaySessionManager } from './gateway.session';
 import { AuthenticatedSocket } from '../utils/interfaces';
 import {
+  AddGroupUserResponse,
   CreateGroupMessageResponse,
   CreateMessageResponse,
+  RemoveGroupUserResponse,
 } from '../utils/types';
 import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
@@ -209,5 +211,18 @@ export class MessagingGateway
         ? this.sessions.getUserSocket(recipient.id)
         : this.sessions.getUserSocket(creator.id);
     if (recipientSocket) recipientSocket.emit('onMessageDelete', payload);
+  }
+
+  @OnEvent('group.user.add')
+  handleGroupUserAdd(payload: AddGroupUserResponse) {
+    const recipientSocket = this.sessions.getUserSocket(payload.user.id);
+    recipientSocket && recipientSocket.emit('onGroupUserAdd', payload);
+  }
+
+  @OnEvent('group.user.remove')
+  handleGroupUserRemove(payload: RemoveGroupUserResponse) {
+    this.server
+      .to(`group-${payload.group.id}`)
+      .emit('onGroupRemovedUser', payload);
   }
 }
