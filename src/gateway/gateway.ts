@@ -16,7 +16,7 @@ import {
   CreateGroupMessageResponse,
   CreateMessageResponse,
 } from '../utils/types';
-import { Conversation, Group, Message } from '../utils/typeorm';
+import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
 
 @WebSocketGateway({
@@ -154,6 +154,12 @@ export class MessagingGateway implements OnGatewayConnection {
       const socket = this.sessions.getUserSocket(user.id);
       socket && socket.emit('onGroupCreate', payload);
     });
+  }
+
+  @OnEvent('group.message.update')
+  handleGroupMessageUpdate(payload: GroupMessage) {
+    const room = `group-${payload.group.id}`;
+    this.server.to(room).emit('onGroupMessageUpdate', payload);
   }
 
   @OnEvent('message.delete')

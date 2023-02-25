@@ -75,6 +75,13 @@ export type CreateGroupMessageResponse = {
   group: Group;
 };
 
+export type EditGroupMessageParams = {
+  groupId: number;
+  messageId: number;
+  userId: number;
+  content: string;
+};
+
 export type DeleteGroupMessageParams = {
   userId: number;
   groupId: number;

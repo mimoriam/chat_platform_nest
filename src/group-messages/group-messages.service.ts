@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import {
   CreateGroupMessageParams,
   DeleteGroupMessageParams,
+  EditGroupMessageParams,
 } from '../utils/types';
 import { Services } from '../utils/constants';
 import { IGroupService } from '../groups/groupsInterface';
@@ -59,6 +60,21 @@ export class GroupMessagesService {
         createdAt: 'DESC',
       },
     });
+  }
+
+  async editGroupMessage(params: EditGroupMessageParams) {
+    const messageDB = await this.groupMessageRepository.findOne({
+      where: {
+        id: params.messageId,
+        author: { id: params.userId },
+      },
+      relations: ['group', 'group.creator', 'group.users', 'author'],
+    });
+    if (!messageDB)
+      throw new HttpException('Cannot Edit Message', HttpStatus.BAD_REQUEST);
+
+    messageDB.content = params.content;
+    return this.groupMessageRepository.save(messageDB);
   }
 
   async deleteGroupMessage(params: DeleteGroupMessageParams) {
