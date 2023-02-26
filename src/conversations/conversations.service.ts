@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { IConversationsService } from './conversationInterface';
 import { AccessParams, CreateConversationParams } from '../utils/types';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Conversation, User } from '../utils/typeorm';
+import { Conversation, Message, User } from '../utils/typeorm';
 import { Repository } from 'typeorm';
 import { Services } from '../utils/constants';
 import { IUserService } from '../users/userInterface';
@@ -13,6 +13,8 @@ export class ConversationsService implements IConversationsService {
   constructor(
     @InjectRepository(Conversation)
     private readonly conversationRepository: Repository<Conversation>,
+    @InjectRepository(Message)
+    private readonly messageRepository: Repository<Message>,
     @Inject(Services.USERS)
     private readonly userService: IUserService,
   ) {}
@@ -37,7 +39,7 @@ export class ConversationsService implements IConversationsService {
   }
 
   async createConversation(user: User, params: CreateConversationParams) {
-    const { email } = params;
+    const { email, message: content } = params;
 
     const recipient = await this.userService.findOneUser({ email });
 
@@ -71,7 +73,14 @@ export class ConversationsService implements IConversationsService {
       recipient: recipient,
     });
 
-    return this.conversationRepository.save(conversation);
+    const savedConversation = await this.conversationRepository.save(
+      conversation,
+    );
+    const messageParams = { content, conversation, author: user };
+    const message = this.messageRepository.create(messageParams);
+    const savedMessage = await this.messageRepository.save(message);
+
+    return savedConversation;
   }
 
   async hasAccess({ id, userId }: AccessParams) {
