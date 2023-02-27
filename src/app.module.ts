@@ -12,6 +12,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GroupsModule } from './groups/groups.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { FriendsModule } from './friends/friends.module';
+import { FriendRequestsModule } from './friend-requests/friend-requests.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { APP_GUARD } from '@nestjs/core';
       ttl: 60,
       limit: 10,
     }),
+    FriendsModule,
+    FriendRequestsModule,
   ],
   controllers: [],
   providers: [

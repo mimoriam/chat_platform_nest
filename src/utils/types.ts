@@ -131,3 +131,25 @@ export type CheckUserGroupParams = {
   id: number;
   userId: number;
 };
+
+export type CreateFriendParams = {
+  user: User;
+  email: string;
+};
+
+export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';
+
+export type FriendRequestParams = {
+  id: number;
+  userId: number;
+};
+
+export type CancelFriendRequestParams = {
+  id: number;
+  userId: number;
+};
+
+export type DeleteFriendRequestParams = {
+  id: number;
+  userId: number;
+};
