@@ -12,4 +12,9 @@ export interface IConversationsService {
   findConversationById(id: number): Promise<Conversation | undefined>;
 
   hasAccess(params: AccessParams): Promise<boolean>;
+
+  isCreated(
+    userId: number,
+    recipientId: number,
+  ): Promise<Conversation | undefined>;
 }

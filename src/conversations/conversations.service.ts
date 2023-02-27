@@ -90,4 +90,19 @@ export class ConversationsService implements IConversationsService {
       conversation.creator.id === userId || conversation.recipient.id === userId
     );
   }
+
+  async isCreated(userId: number, recipientId: number) {
+    return this.conversationRepository.findOne({
+      where: [
+        {
+          creator: { id: userId },
+          recipient: { id: recipientId },
+        },
+        {
+          creator: { id: recipientId },
+          recipient: { id: userId },
+        },
+      ],
+    });
+  }
 }
