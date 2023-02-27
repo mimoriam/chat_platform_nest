@@ -16,7 +16,7 @@ export class FriendEvents {
       receiver.id === userId ? sender.id : receiver.id,
     );
 
-    console.log(`Emitting Event for ${socket?.user?.email}`);
+    console.log(`Emitting Event for ${socket?.user?.username}`);
     socket?.emit('onFriendRemoved', friend);
   }
 }

@@ -311,7 +311,7 @@ export class MessagingGateway
 
     if (user) {
       console.log('user is authenticated');
-      console.log(`fetching ${user.email}'s friends`);
+      console.log(`fetching ${user.username}'s friends`);
 
       const friends = await this.friendsService.getFriends(user.id);
 

@@ -31,8 +31,8 @@ export class FriendRequestService implements IFriendRequestService {
     private readonly friendsService: IFriendsService,
   ) {}
 
-  async create({ user: sender, email }: CreateFriendParams) {
-    const receiver = await this.userService.findOneUser({ email });
+  async create({ user: sender, username}: CreateFriendParams) {
+    const receiver = await this.userService.findOneUser({ username });
 
     if (!receiver) throw new UserNotFoundException();
 

@@ -18,7 +18,7 @@ export class UsersService implements IUserService {
 
   async createUser(userDetails: CreateUserDetails) {
     const existingUser = await this.userRepository.findOne({
-      where: { email: userDetails.email },
+      where: { username: userDetails.username },
     });
 
     if (existingUser)
@@ -33,7 +33,14 @@ export class UsersService implements IUserService {
     params: FindUserParams,
     options?: FindUserOptions,
   ): Promise<User> {
-    const selections: (keyof User)[] = ['email', 'firstName', 'lastName', 'id'];
+    const selections: (keyof User)[] = [
+      'email',
+      'username',
+      'firstName',
+      'lastName',
+      'id',
+      'profile',
+    ];
     const selectionsWithPassword: (keyof User)[] = [...selections, 'password'];
 
     return this.userRepository.findOne({
@@ -43,12 +50,19 @@ export class UsersService implements IUserService {
   }
 
   async searchUsers(query: string) {
-    const statement = '(user.email LIKE :query)';
+    const statement = '(user.username LIKE :query)';
     return this.userRepository
       .createQueryBuilder('user')
       .where(statement, { query: `%${query}%` })
       .limit(10)
-      .select(['user.firstName', 'user.lastName', 'user.email', 'user.id'])
+      .select([
+        'user.username',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.id',
+        'user.profile',
+      ])
       .getMany();
   }
 

@@ -6,6 +6,7 @@ import { Group } from './entities/Group.entity';
 import { GroupMessage } from './entities/GroupMessage.entity';
 import { Friend } from './entities/Friend.entity';
 import { FriendRequest } from './entities/FriendRequest.entity';
+import { Profile } from './entities/Profile';
 
 const entities = [
   User,
@@ -16,6 +17,7 @@ const entities = [
   GroupMessage,
   Friend,
   FriendRequest,
+  Profile,
 ];
 
 export default entities;
@@ -29,4 +31,5 @@ export {
   GroupMessage,
   Friend,
   FriendRequest,
+  Profile,
 };

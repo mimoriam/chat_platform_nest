@@ -27,8 +27,8 @@ export class GroupsService implements IGroupService {
   async createGroup(params: CreateGroupParams) {
     const { creator, title } = params;
 
-    const usersPromise = params.users.map((email) =>
-      this.userService.findOneUser({ email }),
+    const usersPromise = params.users.map((username) =>
+      this.userService.findOneUser({ username }),
     );
 
     const users = (await Promise.all(usersPromise)).filter((user) => user);

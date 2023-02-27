@@ -19,6 +19,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 // # Websockets:
 // npm i @nestjs/event-emitter @nestjs/websockets @nestjs/platform-socket.io
+
+// npm i -D @types/multer
 async function bootstrap() {
   const { PORT, COOKIE_SECRET } = process.env;
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

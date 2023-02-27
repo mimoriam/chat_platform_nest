@@ -30,7 +30,7 @@ export class GroupRecipientService implements IGroupRecipientService {
       throw new HttpException('Insufficient Permissions', HttpStatus.FORBIDDEN);
 
     const recipient = await this.userService.findOneUser({
-      email: params.email,
+      username: params.username,
     });
 
     if (!recipient)
