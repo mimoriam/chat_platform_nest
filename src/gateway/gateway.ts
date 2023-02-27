@@ -22,12 +22,15 @@ import {
 import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
 import { IGroupService } from '../groups/interfaces/groupsInterface';
+import { IFriendsService } from '../friends/friendsInterface';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:3000'],
     credentials: true,
   },
+  pingInterval: 10000,
+  pingTimeout: 15000,
 })
 export class MessagingGateway
   implements OnGatewayConnection, OnGatewayDisconnect
@@ -39,6 +42,8 @@ export class MessagingGateway
     private readonly conversationService: IConversationsService,
     @Inject(Services.GROUPS)
     private readonly groupsService: IGroupService,
+    @Inject(Services.FRIENDS_SERVICE)
+    private readonly friendsService: IFriendsService,
   ) {}
 
   @WebSocketServer()
@@ -294,6 +299,31 @@ export class MessagingGateway
     if (leftUserSocket && !socketsInRoom) {
       console.log('User is online but there are no sockets in the room');
       return leftUserSocket.emit('onGroupParticipantLeft', payload);
+    }
+  }
+
+  @SubscribeMessage('getOnlineFriends')
+  async handleFriendListRetrieve(
+    @MessageBody() data: any,
+    @ConnectedSocket() socket: AuthenticatedSocket,
+  ) {
+    const { user } = socket;
+
+    if (user) {
+      console.log('user is authenticated');
+      console.log(`fetching ${user.email}'s friends`);
+
+      const friends = await this.friendsService.getFriends(user.id);
+
+      const onlineFriends = friends.filter((friend) =>
+        this.sessions.getUserSocket(
+          user.id === friend.receiver.id
+            ? friend.sender.id
+            : friend.receiver.id,
+        ),
+      );
+
+      socket.emit('getOnlineFriends', onlineFriends);
     }
   }
 }
