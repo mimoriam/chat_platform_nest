@@ -10,8 +10,6 @@ export interface IFriendRequestService {
 
   isPending(userOneId: number, userTwoId: number);
 
-  isFriends(userOneId: number, userTwoId: number);
-
   accept(params: FriendRequestParams);
 
   cancel(params: CancelFriendRequestParams): Promise<FriendRequest>;

@@ -15,6 +15,8 @@ import { FriendRequestPending } from './exceptions/FriendRequestPending';
 import { FriendRequestNotFoundException } from './exceptions/FriendRequestNotFound';
 import { FriendRequestAcceptedException } from './exceptions/FriendRequestAccepted';
 import { FriendRequestException } from './exceptions/FriendRequest';
+import { IFriendsService } from '../friends/friendsInterface';
+import { FriendAlreadyExists } from '../friends/exceptions/FriendAlreadyExists';
 
 @Injectable()
 export class FriendRequestService implements IFriendRequestService {
@@ -25,6 +27,8 @@ export class FriendRequestService implements IFriendRequestService {
     private readonly friendRequestRepository: Repository<FriendRequest>,
     @Inject(Services.USERS)
     private readonly userService: IUserService,
+    @Inject(Services.FRIENDS_SERVICE)
+    private readonly friendsService: IFriendsService,
   ) {}
 
   async create({ user: sender, email }: CreateFriendParams) {
@@ -39,6 +43,12 @@ export class FriendRequestService implements IFriendRequestService {
     // Prevent someone from adding themselves as friend
     if (receiver.id === sender.id)
       throw new FriendRequestException('Cannot Add Yourself');
+
+    const isFriends = await this.friendsService.isFriends(
+      sender.id,
+      receiver.id,
+    );
+    if (isFriends) throw new FriendAlreadyExists();
 
     const friend = this.friendRequestRepository.create({
       sender,
@@ -116,23 +126,6 @@ export class FriendRequestService implements IFriendRequestService {
 
     friendRequest.status = 'rejected';
     return this.friendRequestRepository.save(friendRequest);
-  }
-
-  async isFriends(userOneId: number, userTwoId: number) {
-    return this.friendRequestRepository.findOne({
-      where: [
-        {
-          sender: { id: userOneId },
-          receiver: { id: userTwoId },
-          status: 'accepted',
-        },
-        {
-          sender: { id: userTwoId },
-          receiver: { id: userOneId },
-          status: 'accepted',
-        },
-      ],
-    });
   }
 
   async findById(id: number): Promise<FriendRequest> {

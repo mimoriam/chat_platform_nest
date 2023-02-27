@@ -14,5 +14,11 @@ import { Friend } from '../utils/typeorm';
       useClass: FriendsService,
     },
   ],
+  exports: [
+    {
+      provide: Services.FRIENDS_SERVICE,
+      useClass: FriendsService,
+    },
+  ],
 })
 export class FriendsModule {}
