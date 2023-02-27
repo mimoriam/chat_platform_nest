@@ -8,6 +8,7 @@ import { TypeormStore } from 'connect-typeorm';
 import { DataSource } from 'typeorm';
 import entities, { Session } from './utils/typeorm';
 import { WebsocketAdapter } from './gateway/gateway.adapter';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 // npm i class-validator class-transformer @nestjs/config @nestjs/throttler @nestjs/typeorm typeorm pg cookie-parser bcrypt cookie uuid
 // npm i -D @types/cookie-parser @types/bcrypt @types/cookie @types/uuid
@@ -20,7 +21,7 @@ import { WebsocketAdapter } from './gateway/gateway.adapter';
 // npm i @nestjs/event-emitter @nestjs/websockets @nestjs/platform-socket.io
 async function bootstrap() {
   const { PORT, COOKIE_SECRET } = process.env;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   // We'll leave the deprecated symbol as is because we typically use connect-redis instead of typeorm for sessions:
   const dataSource = new DataSource({
     type: 'postgres',
@@ -43,6 +44,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors({ origin: ['http://localhost:3000'], credentials: true });
   app.useGlobalPipes(new ValidationPipe());
+  app.set('trust proxy', 'loopback');
 
   app.use(
     session({
