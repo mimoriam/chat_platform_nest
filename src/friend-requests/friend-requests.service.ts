@@ -36,6 +36,10 @@ export class FriendRequestService implements IFriendRequestService {
 
     if (exists) throw new FriendRequestPending();
 
+    // Prevent someone from adding themselves as friend
+    if (receiver.id === sender.id)
+      throw new FriendRequestException('Cannot Add Yourself');
+
     const friend = this.friendRequestRepository.create({
       sender,
       receiver,
