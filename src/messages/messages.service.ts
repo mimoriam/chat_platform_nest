@@ -22,7 +22,13 @@ export class MessagesService implements IMessageService {
   async createMessage({ user, content, conversationId }: CreateMessageParams) {
     const conversation = await this.conversationRepository.findOne({
       where: { id: conversationId },
-      relations: ['creator', 'recipient', 'lastMessageSent'],
+      relations: [
+        'creator',
+        'recipient',
+        'lastMessageSent',
+        'creator.profile',
+        'recipient.profile',
+      ],
     });
 
     if (!conversation)

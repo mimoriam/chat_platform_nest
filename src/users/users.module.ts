@@ -4,6 +4,7 @@ import { Services } from '../utils/constants';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile, User } from '../utils/typeorm';
 import { UsersController } from './controllers/users.controller';
+import { UserProfileService } from './services/users-profile.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Profile])],
@@ -13,12 +14,22 @@ import { UsersController } from './controllers/users.controller';
       provide: Services.USERS,
       useClass: UsersService,
     },
+
+    {
+      provide: Services.USERS_PROFILES,
+      useClass: UserProfileService,
+    },
   ],
 
   exports: [
     {
       provide: Services.USERS,
       useClass: UsersService,
+    },
+
+    {
+      provide: Services.USERS_PROFILES,
+      useClass: UserProfileService,
     },
   ],
 })
