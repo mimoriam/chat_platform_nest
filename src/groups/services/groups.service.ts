@@ -54,7 +54,13 @@ export class GroupsService implements IGroupService {
   async findGroupById(id: number): Promise<Group> {
     return this.groupRepository.findOne({
       where: { id },
-      relations: ['creator', 'users', 'lastMessageSent', 'owner'],
+      relations: [
+        'creator',
+        'users',
+        'lastMessageSent',
+        'owner',
+        'users.profile',
+      ],
     });
   }
 

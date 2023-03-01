@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Group, GroupMessage} from '../../utils/typeorm';
+import { Group, GroupMessage } from '../../utils/typeorm';
 import { Repository } from 'typeorm';
 import {
   CreateGroupMessageParams,
@@ -55,7 +55,7 @@ export class GroupMessagesService {
   async getGroupMessages(id: number): Promise<GroupMessage[]> {
     return this.groupMessageRepository.find({
       where: { group: { id } },
-      relations: ['author'],
+      relations: ['author', 'author.profile'],
       order: {
         createdAt: 'DESC',
       },
