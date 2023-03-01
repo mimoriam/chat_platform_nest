@@ -18,6 +18,8 @@ export enum Routes {
   FRIEND_REQUESTS = 'friends/requests',
 
   USERS_PROFILES = 'users/profiles',
+
+  USER_PRESENCE = 'users/presence',
 }
 
 export enum Services {
@@ -37,6 +39,8 @@ export enum Services {
   FRIENDS_REQUESTS_SERVICE = 'FRIEND_REQUEST_SERVICE',
 
   USERS_PROFILES = 'USERS_PROFILES_SERVICE',
+
+  USER_PRESENCE = 'USER_PRESENCE_SERVICE',
 }
 
 export enum ServerEvents {

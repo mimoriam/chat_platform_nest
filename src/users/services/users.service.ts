@@ -46,6 +46,7 @@ export class UsersService implements IUserService {
     return this.userRepository.findOne({
       where: params,
       select: options?.selectAll ? selectionsWithPassword : selections,
+      relations: ['profile', 'presence'],
     });
   }
 

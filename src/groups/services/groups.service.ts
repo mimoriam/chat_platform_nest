@@ -48,6 +48,8 @@ export class GroupsService implements IGroupService {
       .leftJoinAndSelect('group.users', 'users')
       .leftJoinAndSelect('group.creator', 'creator')
       .leftJoinAndSelect('group.owner', 'owner')
+      .leftJoinAndSelect('users.profile', 'usersProfile')
+      .leftJoinAndSelect('users.presence', 'usersPresence')
       .getMany();
   }
 
@@ -60,6 +62,7 @@ export class GroupsService implements IGroupService {
         'lastMessageSent',
         'owner',
         'users.profile',
+        'users.presence',
       ],
     });
   }
