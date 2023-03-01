@@ -29,7 +29,7 @@ export class MessagesController {
   @Post()
   async createMessage(
     @AuthUser() user: User,
-    @Param('id', ParseIntPipe) conversationId: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body()
     { content }: CreateMessageDto,
   ) {
@@ -38,7 +38,7 @@ export class MessagesController {
     //   user,
     // });
 
-    const params = { user, conversationId, content };
+    const params = { user, id, content };
     const response = await this.messageService.createMessage(params);
 
     this.eventEmitter.emit('message.create', response);

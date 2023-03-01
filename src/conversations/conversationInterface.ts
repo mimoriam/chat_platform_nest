@@ -1,4 +1,9 @@
-import { AccessParams, CreateConversationParams } from '../utils/types';
+import {
+  AccessParams,
+  CreateConversationParams,
+  GetConversationMessagesParams,
+  UpdateConversationParams,
+} from '../utils/types';
 import { Conversation, User } from '../utils/typeorm';
 
 export interface IConversationsService {
@@ -17,4 +22,10 @@ export interface IConversationsService {
     userId: number,
     recipientId: number,
   ): Promise<Conversation | undefined>;
+
+  save(conversation: Conversation): Promise<Conversation>;
+
+  getMessages(params: GetConversationMessagesParams): Promise<Conversation>;
+
+  update(params: UpdateConversationParams);
 }

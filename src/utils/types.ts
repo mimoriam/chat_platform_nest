@@ -40,8 +40,8 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export type CreateMessageParams = {
+  id: number;
   content: string;
-  conversationId: number;
   user: User;
 };
 
@@ -176,4 +176,14 @@ export type UpdateUserProfileParams = Partial<{
   about: string;
   banner: Express.Multer.File;
   avatar: Express.Multer.File;
+}>;
+
+export type GetConversationMessagesParams = {
+  id: number;
+  limit: number;
+};
+
+export type UpdateConversationParams = Partial<{
+  id: number;
+  lastMessageSent: Message;
 }>;
