@@ -16,6 +16,7 @@ import { IUserService } from '../users/interfaces/userInterface';
 import { instanceToPlain } from 'class-transformer';
 import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
 import { Response, Request } from 'express';
+import { AuthenticatedRequest } from '../utils/types';
 
 @Controller(Routes.AUTH)
 export class AuthController {
@@ -43,5 +44,10 @@ export class AuthController {
   }
 
   @Post('logout')
-  logout() {}
+  @UseGuards(AuthenticatedGuard)
+  logout(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+    req.logout((err) => {
+      return err ? res.send(400) : res.send(200);
+    });
+  }
 }

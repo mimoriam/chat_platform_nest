@@ -54,6 +54,11 @@ export class WebsocketAdapter extends IoAdapter {
 
       if (!sessionDB) return next(new Error('No session found'));
 
+      // Null check:
+      const userFromJson = JSON.parse(sessionDB.json);
+      if (!userFromJson.passport || !userFromJson.passport.user)
+        return next(new Error('Passport or User object does not exist.'));
+
       const userDB = plainToInstance(
         User,
         JSON.parse(sessionDB.json).passport.user,
