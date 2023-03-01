@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Routes, Services } from '../utils/constants';
 import { IConversationsService } from '../conversations/conversationInterface';
-import { IUserService } from '../users/userInterface';
+import { IUserService } from '../users/interfaces/userInterface';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AuthUser } from '../utils/decorators';
 import { User } from '../utils/typeorm';

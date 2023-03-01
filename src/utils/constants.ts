@@ -1,3 +1,5 @@
+import { MulterField } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+
 export enum Routes {
   AUTH = 'auth',
   USERS = 'users',
@@ -14,6 +16,8 @@ export enum Routes {
   FRIENDS = 'friends',
 
   FRIEND_REQUESTS = 'friends/requests',
+
+  USERS_PROFILES = 'users/profiles',
 }
 
 export enum Services {
@@ -31,6 +35,8 @@ export enum Services {
   FRIENDS_SERVICE = 'FRIENDS_SERVICE',
 
   FRIENDS_REQUESTS_SERVICE = 'FRIEND_REQUEST_SERVICE',
+
+  USERS_PROFILES = 'USERS_PROFILES_SERVICE',
 }
 
 export enum ServerEvents {
@@ -45,3 +51,14 @@ export enum WebsocketEvents {
   FRIEND_REQUEST_ACCEPTED = 'onFriendRequestAccepted',
   FRIEND_REQUEST_REJECTED = 'onFriendRequestRejected',
 }
+
+export const UserProfileFileFields: MulterField[] = [
+  {
+    name: 'banner',
+    maxCount: 1,
+  },
+  {
+    name: 'avatar',
+    maxCount: 1,
+  },
+];

@@ -6,7 +6,7 @@ import {
   LeaveGroupParams,
   RemoveGroupRecipientParams,
 } from '../../utils/types';
-import { IUserService } from '../../users/userInterface';
+import { IUserService } from '../../users/interfaces/userInterface';
 import { IGroupRecipientService } from '../interfaces/group-recipientInterface';
 import { IGroupService } from '../interfaces/groupsInterface';
 import { GroupNotFoundException } from '../exceptions/GroupNotFound';

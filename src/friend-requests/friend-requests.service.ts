@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Friend, FriendRequest } from '../utils/typeorm';
 import { Repository } from 'typeorm';
 import { Services } from '../utils/constants';
-import { IUserService } from '../users/userInterface';
+import { IUserService } from '../users/interfaces/userInterface';
 import {
   CancelFriendRequestParams,
   CreateFriendParams,
@@ -31,7 +31,7 @@ export class FriendRequestService implements IFriendRequestService {
     private readonly friendsService: IFriendsService,
   ) {}
 
-  async create({ user: sender, username}: CreateFriendParams) {
+  async create({ user: sender, username }: CreateFriendParams) {
     const receiver = await this.userService.findOneUser({ username });
 
     if (!receiver) throw new UserNotFoundException();

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Group, User } from '../../utils/typeorm';
 import { Repository } from 'typeorm';
 import { Services } from '../../utils/constants';
-import { IUserService } from '../../users/userInterface';
+import { IUserService } from '../../users/interfaces/userInterface';
 import {
   AccessParams,
   CreateGroupParams,

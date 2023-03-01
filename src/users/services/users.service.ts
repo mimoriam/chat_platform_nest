@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { IUserService } from './userInterface';
+import { IUserService } from '../interfaces/userInterface';
 import {
   CreateUserDetails,
   FindUserOptions,
   FindUserParams,
-} from '../utils/types';
+} from '../../utils/types';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../utils/typeorm';
+import { User } from '../../utils/typeorm';
 import { Repository } from 'typeorm';
-import { hashPassword } from '../utils/helpers';
+import { hashPassword } from '../../utils/helpers';
 
 @Injectable()
 export class UsersService implements IUserService {

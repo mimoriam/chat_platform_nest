@@ -16,7 +16,7 @@ export type CreateUserDetails = {
 };
 
 export type ValidateUserDetails = {
-  email: string;
+  username: string;
   password: string;
 };
 
@@ -166,3 +166,14 @@ export type RemoveFriendEventPayload = {
   friend: Friend;
   userId: number;
 };
+
+export type UserProfileFiles = Partial<{
+  banner: Express.Multer.File[];
+  avatar: Express.Multer.File[];
+}>;
+
+export type UpdateUserProfileParams = Partial<{
+  about: string;
+  banner: Express.Multer.File;
+  avatar: Express.Multer.File;
+}>;

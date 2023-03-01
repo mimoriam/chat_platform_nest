@@ -12,7 +12,7 @@ import {
 import { Routes, Services } from '../utils/constants';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { IAuthService } from './authInterface';
-import { IUserService } from '../users/userInterface';
+import { IUserService } from '../users/interfaces/userInterface';
 import { instanceToPlain } from 'class-transformer';
 import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
 import { Response, Request } from 'express';

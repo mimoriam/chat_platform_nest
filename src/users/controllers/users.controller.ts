@@ -10,11 +10,11 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { Routes, Services } from '../utils/constants';
-import { IUserService } from './userInterface';
+import { Routes, Services } from '../../utils/constants';
+import { IUserService } from '../interfaces/userInterface';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserProfileDto } from './dtos/UserProfile.dto';
-import { UserAlreadyExists } from './exceptions/UserAlreadyExists';
+import { UserProfileDto } from '../dtos/UserProfile.dto';
+import { UserAlreadyExists } from '../exceptions/UserAlreadyExists';
 
 @Controller(Routes.USERS)
 export class UsersController {
@@ -46,7 +46,7 @@ export class UsersController {
 
     const user = await this.userService.findOneUser({ username });
 
-      if (user) throw new UserAlreadyExists();
+    if (user) throw new UserAlreadyExists();
     return HttpStatus.OK;
   }
 }
