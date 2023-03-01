@@ -68,6 +68,7 @@ export class MessagesService implements IMessageService {
         'conversation.creator',
         'conversation.recipient',
         'author',
+        'author.profile',
       ],
     });
     if (!messageDB)

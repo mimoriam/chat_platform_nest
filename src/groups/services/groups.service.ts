@@ -50,6 +50,7 @@ export class GroupsService implements IGroupService {
       .leftJoinAndSelect('group.owner', 'owner')
       .leftJoinAndSelect('users.profile', 'usersProfile')
       .leftJoinAndSelect('users.presence', 'usersPresence')
+      .orderBy('group.lastMessageSentAt', 'DESC')
       .getMany();
   }
 
