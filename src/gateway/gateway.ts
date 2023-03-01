@@ -23,6 +23,7 @@ import { Conversation, Group, GroupMessage, Message } from '../utils/typeorm';
 import { IConversationsService } from '../conversations/conversationInterface';
 import { IGroupService } from '../groups/interfaces/groupsInterface';
 import { IFriendsService } from '../friends/friendsInterface';
+import { CreateCallDto } from './dtos/CreateCall.dto';
 
 @WebSocketGateway({
   cors: {
@@ -325,5 +326,64 @@ export class MessagingGateway
 
       socket.emit('getOnlineFriends', onlineFriends);
     }
+  }
+
+  @SubscribeMessage('onVideoCallInitiate')
+  async handleVideoCall(
+    @MessageBody() data: CreateCallDto,
+    @ConnectedSocket() socket: AuthenticatedSocket,
+  ) {
+    console.log('onVideoCallInitiate');
+    const caller = socket.user;
+    const receiverSocket = this.sessions.getUserSocket(data.recipientId);
+    if (!receiverSocket) socket.emit('onUserUnavailable');
+    receiverSocket.emit('onVideoCall', { ...data, caller });
+  }
+
+  @SubscribeMessage('videoCallAccepted')
+  async handleVideoCallAccepted(
+    @MessageBody() data,
+    @ConnectedSocket() socket: AuthenticatedSocket,
+  ) {
+    const callerSocket = this.sessions.getUserSocket(data.caller.id);
+    const conversation = await this.conversationService.isCreated(
+      data.caller.id,
+      socket.user.id,
+    );
+    if (!conversation) return console.log('No conversation found');
+    if (callerSocket) {
+      console.log('Emitting onVideoCallAccept event');
+      const payload = { ...data, conversation, acceptor: socket.user };
+      callerSocket.emit('onVideoCallAccept', payload);
+      socket.emit('onVideoCallAccept', payload);
+    }
+  }
+
+  @SubscribeMessage('videoCallRejected')
+  async handleVideoCallRejected(
+    @MessageBody() data,
+    @ConnectedSocket() socket: AuthenticatedSocket,
+  ) {
+    console.log('inside videoCallRejected event');
+    const receiver = socket.user;
+    const callerSocket = this.sessions.getUserSocket(data.caller.id);
+    callerSocket && callerSocket.emit('onVideoCallRejected', { receiver });
+    socket.emit('onVideoCallRejected', { receiver });
+  }
+
+  @SubscribeMessage('videoCallHangUp')
+  async handleVideoCallHangUp(
+    @MessageBody() { caller, receiver },
+    @ConnectedSocket() socket: AuthenticatedSocket,
+  ) {
+    console.log('inside videoCallHangup event');
+    if (socket.user.id === caller.id) {
+      const receiverSocket = this.sessions.getUserSocket(receiver.id);
+      socket.emit('onVideoCallHangUp');
+      return receiverSocket && receiverSocket.emit('onVideoCallHangUp');
+    }
+    socket.emit('onVideoCallHangUp');
+    const callerSocket = this.sessions.getUserSocket(caller.id);
+    callerSocket && callerSocket.emit('onVideoCallHangUp');
   }
 }
